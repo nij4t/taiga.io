@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "taiga.fullname" . }}
+  labels:
+{{ include "taiga.labels" . | indent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "taiga.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ include "taiga.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}-front
+          image: "{{ .Values.image.repository.front }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: front
+              containerPort: 80
+              protocol: TCP
+          #livenessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: front
+          #readinessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: front
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - name: config
+            mountPath: /taiga/conf.json
+            subPath: conf.json
+        - name: {{ .Chart.Name }}-back
+          image: "{{ .Values.image.repository.back }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: back
+              containerPort: 8000
+              protocol: TCP
+          #livenessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: back
+          #readinessProbe:
+          #  httpGet:
+          #    path: /
+          #    port: back
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+          - name: config
+            mountPath: /usr/src/app/taiga-back/settings/local.py
+            subPath: local.py
+          - name: taigastatic-persistent-storage
+            mountPath: /taiga/static
+          - name: taigamedia-persistent-storage
+            mountPath: /taiga/media
+      hostAliases:
+        - ip: "127.0.0.1"
+          hostnames:
+            - "taiga-back"
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      volumes:
+      - name: config
+        configMap:
+          name: taiga-conf
+      - name: taigastatic-persistent-storage
+        persistentVolumeClaim:
+          claimName: taigastatic-pv-claim
+      - name: taigamedia-persistent-storage
+        persistentVolumeClaim:
+          claimName: taigamedia-pv-claim
