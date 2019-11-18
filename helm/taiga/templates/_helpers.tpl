@@ -43,3 +43,28 @@ app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end -}}
+
+{{/*
+  Determine the hostname for Taiga
+*/}}
+{{- define "taiga.hostname" -}}
+{{ (index .Values.ingress.hosts 0).host }}
+{{- end -}}
+
+{{/*
+  Determine the scheme for Taiga
+*/}}
+{{- define "taiga.scheme" -}}
+{{- if not .Values.ingress.tls }}http{{- else }}https{{- end }}
+{{- end -}}
+
+{{/*
+  Determine the hostname to use for PostgreSQL.
+*/}}
+{{- define "postgresql.hostname" -}}
+{{- if .Values.postgresql.enabled -}}
+{{- printf "%s-%s" .Release.Name "postgresql" | trunc 63 | trimSuffix "-" -}}
+{{- else -}}
+{{- printf "%s" .Values.postgresql.postgresServer -}}
+{{- end -}}
+{{- end -}}

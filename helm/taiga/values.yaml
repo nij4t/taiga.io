@@ -2,6 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Taiga's main configuration
+taiga:
+  debug: false
+  gravatar: false
+  support: https://tree.taiga.io/support/
+
 replicaCount: 1
 
 image:
