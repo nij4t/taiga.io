@@ -10,6 +10,10 @@ spec:
     matchLabels:
       app.kubernetes.io/name: {{ include "taiga.name" . }}
       app.kubernetes.io/instance: {{ .Release.Name }}
+{{- if .Values.deploymentStrategy }}
+  strategy:
+{{ toYaml .Values.deploymentStrategy | indent 4 }}
+{{- end }}
   template:
     metadata:
       labels:
@@ -63,9 +67,9 @@ spec:
           - name: config
             mountPath: /usr/src/app/taiga-back/settings/local.py
             subPath: local.py
-          - name: taigastatic-persistent-storage
+          - name: taiga-pv
             mountPath: /taiga/static
-          - name: taigamedia-persistent-storage
+          - name: taiga-pv
             mountPath: /taiga/media
       hostAliases:
         - ip: "127.0.0.1"
@@ -87,9 +91,11 @@ spec:
       - name: config
         configMap:
           name: taiga-conf
-      - name: taigastatic-persistent-storage
+      - name: taiga-pv
+        {{- if .Values.persistence.enabled }}
         persistentVolumeClaim:
-          claimName: taigastatic-pv-claim
-      - name: taigamedia-persistent-storage
-        persistentVolumeClaim:
-          claimName: taigamedia-pv-claim
+          claimName: {{ if .Values.persistence.existingClaim }}{{ .Values.persistence.existingClaim }}{{- else }}{{ template "taiga.fullname" . }}{{- end }}
+        {{- else }}
+        emptyDir: {}
+        {{- end }}
+
