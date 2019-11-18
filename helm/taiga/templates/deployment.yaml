@@ -1,6 +1,8 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
+    checksum/config: {{ include (print $.Template.BasePath "/cm.yaml") . | sha1sum }}
   name: {{ include "taiga.fullname" . }}
   labels:
 {{ include "taiga.labels" . | indent 4 }}

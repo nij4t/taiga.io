@@ -1,0 +1,30 @@
+{{- if .Values.taiga.seed }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "taiga.fullname" . }}
+  labels:
+{{ include "taiga.labels" . | indent 4 }}
+spec:
+  template:
+    metadata:
+      name: {{ include "taiga.fullname" . }}
+    spec:
+      containers:
+      - name: database-setup
+        image: xtraterrestrial/taiga-backend:v5.0.0
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: DB_NAME
+          value: {{ .Values.postgresql.postgresDatabase }}
+        command: ["./regenerate.sh", "-y"]
+        volumeMounts:
+        - name: config
+          mountPath: /usr/src/app/taiga-back/settings/local.py
+          subPath: local.py
+      restartPolicy: OnFailure
+      volumes:
+      - name: config
+        configMap:
+          name: {{ include "taiga.fullname" . }}
+{{- end }}

@@ -34,7 +34,7 @@ data:
   local.py: |
     from .development import *
     
-    DEBUG = {{- if .Values.taiga.debug }}True{{- else }}False{{- end }}
+    DEBUG = {{- if .Values.taiga.debug }} True {{- else }} False {{- end }}
     
     #ADMINS = (
     #    ("Admin", "example@example.com"),
@@ -62,4 +62,21 @@ data:
            "name": "front"
         },
     }
+
+    {{- if .Values.taiga.email.enabled }}
+    DEFAULT_FROM_EMAIL =  '{{ .Values.taiga.email.from }}' 
+    CHANGE_NOTIFICATIONS_MIN_INTERVAL = {{ .Values.taiga.email.notificationMinInterval }} #seconds
+
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_USE_TLS = {{- if .Values.taiga.email.tls }}True{{- else }}False{{- end }}
+    EMAIL_HOST = '{{ .Values.taiga.email.host }}'
+    EMAIL_PORT = '{{ .Values.taiga.email.port }}'
+    EMAIL_HOST_USER = '{{ .Values.taiga.email.user }}'
+    EMAIL_HOST_PASSWORD = '{{ .Values.taiga.email.password }}'
+    {{- end }}
+
+    PUBLIC_REGISTER_ENABLED = {{- if .Values.taiga.publicRegister }} True {{- else }} False {{- end }}
+
+    FEEDBACK_ENABLED = False
+    FEEDBACK_EMAIL = "support@taiga.io"
 

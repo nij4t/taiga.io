@@ -7,6 +7,16 @@ taiga:
   debug: false
   gravatar: false
   support: https://tree.taiga.io/support/
+  email:
+    enabled: false
+    notificationMinInterval: 300
+   # tls: true
+   # from: no-reply@taiga.example.com
+   # host: taiga.example.com
+   # user: no-reply@taiga.example.com
+   # password: taigaPassword
+  publicRegister: false
+  seed: false
 
 replicaCount: 1
 
