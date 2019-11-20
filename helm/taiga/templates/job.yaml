@@ -10,13 +10,16 @@ spec:
     metadata:
       name: {{ include "taiga.fullname" . }}
     spec:
+    {{- if .Values.serviceAccount.enabled }}
+      serviceAccount: {{ .Values.serviceAccount.name }}
+    {{- end }}
       containers:
       - name: database-setup
         image: xtraterrestrial/taiga-backend:v5.0.0
         imagePullPolicy: IfNotPresent
         env:
         - name: DB_NAME
-          value: {{ .Values.postgresql.postgresDatabase }}
+          value: {{ .Values.postgresql.postgresqlDatabase }}
         command: ["./regenerate.sh", "-y"]
         volumeMounts:
         - name: config

@@ -18,6 +18,10 @@ taiga:
   publicRegister: false
   seed: false
 
+serviceAccount:
+  enabled: false
+# name: 
+
 replicaCount: 1
 
 image:
@@ -100,9 +104,9 @@ postgresql:
   # instance, set enabled to false and provide the name of the secret on the
   # line below:
   # postgresPasswordSecret: ""
-  postgresUser: taigaUser
-  postgresPassword: taigaPassword
-  postgresDatabase: taigaDB
+  postgresqlUsername: taigaUser
+  postgresqlPassword: taigaPassword
+  postgresqlDatabase: taigaDB
   # Specify the TCP port that PostgreSQL should use
   service:
     port: 5432
