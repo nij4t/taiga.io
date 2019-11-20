@@ -18,6 +18,9 @@ spec:
         app.kubernetes.io/name: {{ include "taiga.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+    {{- if .Values.serviceAccount.enabled }}
+      serviceAccount: {{ .Values.serviceAccount.name }}
+    {{- end }}
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -44,6 +47,10 @@ spec:
           - name: config
             mountPath: /taiga/conf.json
             subPath: conf.json
+          - name: taiga-pv
+            mountPath: /taiga/static
+          - name: taiga-pv
+            mountPath: /taiga/media
         - name: {{ .Chart.Name }}-back
           image: "{{ .Values.image.repository.back }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
@@ -66,9 +73,9 @@ spec:
             mountPath: /usr/src/app/taiga-back/settings/local.py
             subPath: local.py
           - name: taiga-pv
-            mountPath: /taiga/static
+            mountPath: /usr/src/app/taiga-back/static
           - name: taiga-pv
-            mountPath: /taiga/media
+            mountPath: /usr/src/app/taiga-back/media
       hostAliases:
         - ip: "127.0.0.1"
           hostnames:

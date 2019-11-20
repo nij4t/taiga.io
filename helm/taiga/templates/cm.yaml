@@ -43,10 +43,10 @@ data:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": "{{ .Values.postgresql.postgresDatabase }}",
+            "NAME": "{{ .Values.postgresql.postgresqlDatabase }}",
             "HOST": "{{ template "postgresql.hostname" . }}",
-            "USER": "{{ .Values.postgresql.postgresUser }}",
-            "PASSWORD": "{{ .Values.postgresql.postgresPassword }}",
+            "USER": "{{ .Values.postgresql.postgresqlUsername }}",
+            "PASSWORD": "{{ .Values.postgresql.postgresqlPassword }}",
         }
     }
     
@@ -58,7 +58,7 @@ data:
         },
         "front": {
            "scheme": "{{ include "taiga.scheme" . }}",
-           "domain": "{{- include "taiga.hostname" . }}",
+           "domain": "{{ include "taiga.hostname" . }}",
            "name": "front"
         },
     }
@@ -79,4 +79,10 @@ data:
 
     FEEDBACK_ENABLED = False
     FEEDBACK_EMAIL = "support@taiga.io"
+
+    #MEDIA_ROOT = '/taiga/media'
+    #STATIC_ROOT = '/taiga/static'
+
+    MEDIA_URL = "{{ include "taiga.scheme" . }}://{{ include "taiga.hostname" . }}/media/"
+    STATIC_URL = "{{ include "taiga.scheme" . }}://{{ include "taiga.hostname" . }}/static/"
 
