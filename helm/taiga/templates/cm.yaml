@@ -18,7 +18,7 @@ data:
         "themes": ["taiga", "material-design"],
         "defaultTheme": "taiga",
         "publicRegisterEnabled": true,
-        "feedbackEnabled": true,
+        "feedbackEnabled": {{ .Values.taiga.feedback.enabled }},
         "supportUrl": "{{ .Values.taiga.support }}",
         "privacyPolicyUrl": null,
         "termsOfServiceUrl": null,
@@ -77,11 +77,10 @@ data:
 
     PUBLIC_REGISTER_ENABLED = {{- if .Values.taiga.publicRegister }} True {{- else }} False {{- end }}
 
-    FEEDBACK_ENABLED = False
-    FEEDBACK_EMAIL = "support@taiga.io"
-
-    #MEDIA_ROOT = '/taiga/media'
-    #STATIC_ROOT = '/taiga/static'
+    {{- if .Values.taiga.feedback.enabled }}
+    FEEDBACK_ENABLED = True
+    FEEDBACK_EMAIL = "{{ .Values.taiga.feedback.email }}" 
+    {{- end }}
 
     MEDIA_URL = "{{ include "taiga.scheme" . }}://{{ include "taiga.hostname" . }}/media/"
     STATIC_URL = "{{ include "taiga.scheme" . }}://{{ include "taiga.hostname" . }}/static/"

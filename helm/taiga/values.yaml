@@ -17,6 +17,9 @@ taiga:
    # password: taigaPassword
   publicRegister: false
   seed: false
+  feedback:
+    enabled: true
+    email: support@taiga.io
 
 serviceAccount:
   enabled: false
