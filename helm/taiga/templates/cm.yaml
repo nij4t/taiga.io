@@ -65,7 +65,7 @@ data:
 
     {{- if .Values.taiga.email.enabled }}
     DEFAULT_FROM_EMAIL =  '{{ .Values.taiga.email.from }}' 
-    CHANGE_NOTIFICATIONS_MIN_INTERVAL = {{ .Values.taiga.email.notificationMinInterval }} #seconds
+    #CHANGE_NOTIFICATIONS_MIN_INTERVAL = {{ .Values.taiga.email.notificationMinInterval }} #seconds
 
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_USE_TLS = {{- if .Values.taiga.email.tls }}True{{- else }}False{{- end }}
