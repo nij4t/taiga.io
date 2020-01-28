@@ -33,14 +33,14 @@ spec:
             - name: front
               containerPort: 80
               protocol: TCP
-          #livenessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: front
-          #readinessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: front
+          livenessProbe:
+            httpGet:
+              path: /discover
+              port: front
+          readinessProbe:
+            httpGet:
+              path: /discover
+              port: front
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
@@ -58,14 +58,14 @@ spec:
             - name: back
               containerPort: 8000
               protocol: TCP
-          #livenessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: back
-          #readinessProbe:
-          #  httpGet:
-          #    path: /
-          #    port: back
+          livenessProbe:
+            httpGet:
+              path: /api/v1/projects?discover_mode=true&is_featured=true
+              port: back
+          readinessProbe:
+            httpGet:
+              path: /api/v1/projects?discover_mode=true&is_featured=true
+              port: back
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
